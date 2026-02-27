@@ -5,7 +5,7 @@ import { Library, Info, BookOpen } from "lucide-react";
 
 interface ResourceContentProps {
     description: string;
-    source?: string;
+    source?: string | null;
     category: string;
 }
 
@@ -35,12 +35,6 @@ export function ResourceContent({ description, source, category }: ResourceConte
                                     &quot;{description}&quot;
                                 </p>
                                 <div className="mt-8 space-y-4 text-muted-foreground">
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                    </p>
-                                    <p>
-                                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                    </p>
                                 </div>
                             </CardContent>
                         </Card>

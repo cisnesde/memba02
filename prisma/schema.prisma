@@ -8,15 +8,17 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String     @id
   name          String
-  email         String    @unique
+  email         String     @unique
   emailVerified Boolean
   image         String?
+  role          String     @default("user")
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  resources     Resource[]
 
   @@map("user")
 }
@@ -63,4 +65,34 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  author      String
+  type        String               // "Livro", "Artigo", "Review Paper"
+  category    String               // "Tecnologia", "Medicina", etc.
+  year        Int?
+  description String   @db.Text
+
+  coverImage  String?              // URL (Cloudinary ou externa)
+
+  // Tipo de fonte: "upload" ou "external_link"
+  sourceType  String               // "upload" | "external_link"
+  fileUrl     String?              // URL do ficheiro no Cloudinary
+  filePublicId String?             // Cloudinary public_id (para deletar)
+  externalUrl String?              // Link externo para outra biblioteca
+  source      String?              // Nome da fonte: "DOAJ", "Open Library"
+
+  citations   Int?
+  pages       Int?
+  featured    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+
+  @@map("resource")
 }

@@ -9,8 +9,8 @@ interface ResourceHeroProps {
     author: string;
     type: ResourceType;
     category: string;
-    year?: string | number;
-    coverImage?: string;
+    year?: string | number | null;
+    coverImage?: string | null;
 }
 
 export function ResourceHero({ title, author, type, category, year, coverImage }: ResourceHeroProps) {

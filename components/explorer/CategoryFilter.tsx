@@ -1,27 +1,17 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export const CATEGORIES = [
-    "Todos",
-    "Livros",
-    "Artigos",
-    "Tecnologia",
-    "Ciência",
-    "História",
-    "Ficção",
-    "Acadêmico",
-];
-
 interface CategoryFilterProps {
+    categories: string[];
     activeCategory: string;
     setActiveCategory: (category: string) => void;
 }
 
-export function CategoryFilter({ activeCategory, setActiveCategory }: CategoryFilterProps) {
+export function CategoryFilter({ categories, activeCategory, setActiveCategory }: CategoryFilterProps) {
     return (
         <div className="w-full overflow-x-auto pb-4 pt-2 hide-scrollbar">
             <div className="flex items-center gap-2 md:justify-center px-4 md:px-0 min-w-max">
-                {CATEGORIES.map((category, index) => {
+                {categories.map((category, index) => {
                     const isActive = activeCategory === category;
 
                     return (

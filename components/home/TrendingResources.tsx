@@ -7,49 +7,22 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
-// Placeholder data covering both books and articles
-const TRENDING_RESOURCES = [
-    {
-        id: "r1",
-        title: "The impact of artificial intelligence on modern healthcare",
-        authors: "Silva, M., & Johnson, A.",
-        type: "Article",
-        source: "Directory of Open Access Journals",
-        year: 2023,
-        category: "Medicine",
-        citations: 142
-    },
-    {
-        id: "r2",
-        title: "Introduction to Quantum Computing Algorithms",
-        authors: "Nielsen, M. A.",
-        type: "Book",
-        source: "Memba Local Repository",
-        year: 2021,
-        category: "Computer Science",
-        pages: 420
-    },
-    {
-        id: "r3",
-        title: "Sustainable Urban Architectures: A Review",
-        authors: "Chen, H., et al.",
-        type: "Review Paper",
-        source: "SciELO",
-        year: 2024,
-        category: "Architecture",
-        citations: 56
-    },
-    {
-        id: "r4",
-        title: "Macroeconomics and the Global Market",
-        authors: "Krugman, P.",
-        type: "Book",
-        source: "Open Library",
-        year: 2018,
-        category: "Economics",
-        pages: 650
-    }
-];
+interface Resource {
+    id: string;
+    slug: string;
+    title: string;
+    author: string;
+    type: string;
+    source: string | null;
+    year: number | null;
+    category: string;
+    citations: number | null;
+    pages: number | null;
+}
+
+interface TrendingResourcesProps {
+    resources: Resource[];
+}
 
 const container: Variants = {
     hidden: { opacity: 0 },
@@ -66,7 +39,11 @@ const item: Variants = {
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
 
-export function TrendingResources() {
+export function TrendingResources({ resources }: TrendingResourcesProps) {
+    if (resources.length === 0) {
+        return null; // Don't render section if no featured resources
+    }
+
     return (
         <section className="w-full py-16 md:py-24 bg-muted/20 border-b">
             <div className="container px-4 md:px-6 mx-auto">
@@ -87,12 +64,12 @@ export function TrendingResources() {
                     whileInView="show"
                     viewport={{ once: true, margin: "-100px" }}
                 >
-                    {TRENDING_RESOURCES.map((resource) => (
+                    {resources.map((resource) => (
                         <motion.div key={resource.id} variants={item} className="h-full">
                             <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-md hover:border-primary/50">
                                 <CardHeader className="p-5 pb-0 flex flex-row items-start justify-between">
-                                    <Badge variant={resource.type === "Book" ? "default" : "secondary"} className="mb-2">
-                                        {resource.type === "Book" ? <BookOpen className="h-3 w-3 mr-1" /> : <FileText className="h-3 w-3 mr-1" />}
+                                    <Badge variant={resource.type === "Livro" ? "default" : "secondary"} className="mb-2">
+                                        {resource.type === "Livro" ? <BookOpen className="h-3 w-3 mr-1" /> : <FileText className="h-3 w-3 mr-1" />}
                                         {resource.type}
                                     </Badge>
                                     <span className="text-xs font-semibold text-muted-foreground px-2 py-1 bg-muted rounded-md shrink-0">
@@ -103,18 +80,20 @@ export function TrendingResources() {
                                     <h3 className="font-bold text-lg leading-snug line-clamp-3 mb-2" title={resource.title}>
                                         {resource.title}
                                     </h3>
-                                    <p className="text-sm text-foreground/80 mb-1">{resource.authors}</p>
+                                    <p className="text-sm text-foreground/80 mb-1">{resource.author}</p>
                                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-3">
-                                        <span className="flex items-center">
-                                            <Library className="h-3 w-3 mr-1" /> {resource.source}
-                                        </span>
-                                        <span>• {resource.year}</span>
+                                        {resource.source && (
+                                            <span className="flex items-center">
+                                                <Library className="h-3 w-3 mr-1" /> {resource.source}
+                                            </span>
+                                        )}
+                                        {resource.year && <span>• {resource.year}</span>}
                                         {resource.citations && <span className="text-primary font-medium">• {resource.citations} citações</span>}
                                     </div>
                                 </CardContent>
                                 <CardFooter className="p-5 pt-0 mt-auto border-t">
                                     <Button variant="ghost" className="w-full justify-between text-sm group" asChild>
-                                        <Link href={`/resource/${resource.id}`}>
+                                        <Link href={`/resource/${resource.slug || resource.id}`}>
                                             Aceder ao Recurso
                                             <ExternalLink className="h-4 w-4 ml-2 text-muted-foreground group-hover:text-primary transition-colors" />
                                         </Link>

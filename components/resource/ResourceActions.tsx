@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,25 +8,70 @@ import {
     Library,
     Download,
     Share2,
-    BookmarkCheck
+    BookmarkCheck,
+    ExternalLink,
 } from "lucide-react";
 import { useState } from "react";
+import { getCloudinaryDownloadUrl } from "@/lib/cloudinary-utils";
 
+interface ResourceActionsProps {
+    title: string;
+    sourceType: string;
+    fileUrl: string | null;
+    externalUrl: string | null;
+}
 
-
-export function ResourceActions() {
+export function ResourceActions({ title, sourceType, fileUrl, externalUrl }: ResourceActionsProps) {
     const [isFavorite, setIsFavorite] = useState(false);
     const [inLibrary, setInLibrary] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
 
-    // Simple feedback animations
     const handleFavorite = () => {
         setIsFavorite(!isFavorite);
-        // Notification logic would go here
     };
 
     const handleLibrary = () => {
         setInLibrary(!inLibrary);
     };
+
+    const handleDownload = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        if (!fileUrl || isDownloading) return;
+
+        setIsDownloading(true);
+        try {
+            // Fetch the raw file blob directly bypassing transformations
+            const response = await fetch(fileUrl);
+            if (!response.ok) throw new Error("Download HTTP error: " + response.status);
+
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.href = blobUrl;
+
+            // Generate clean filename
+            const cleanTitle = title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, '_');
+            const ext = fileUrl.split('?')[0].split('.').pop();
+            const finalExt = (ext && ext.length <= 4) ? ext : 'pdf';
+
+            a.download = `${cleanTitle}.${finalExt}`;
+
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error("Client-side download failed, falling back to direct link", error);
+            window.open(fileUrl, '_blank');
+        } finally {
+            setIsDownloading(false);
+        }
+    };
+
+    const actionUrl = sourceType === "upload" ? fileUrl : externalUrl;
+    const isExternal = sourceType === "external_link";
 
     return (
         <motion.div
@@ -37,10 +84,32 @@ export function ResourceActions() {
                 <h4 className="font-semibold text-foreground mb-4">Ações do Recurso</h4>
 
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button className="w-full h-12 text-lg font-semibold gap-2 shadow-lg shadow-primary/20" variant="default">
-                        <Play className="w-5 h-5 fill-current" />
-                        Ler Online
-                    </Button>
+                    {actionUrl ? (
+                        <Button
+                            className="w-full h-12 text-lg font-semibold gap-2 shadow-lg shadow-primary/20"
+                            variant="default"
+                            asChild
+                        >
+                            <a href={actionUrl} target="_blank" rel="noopener noreferrer">
+                                {isExternal ? (
+                                    <>
+                                        <ExternalLink className="w-5 h-5" />
+                                        Abrir na Biblioteca
+                                    </>
+                                ) : (
+                                    <>
+                                        <Play className="w-5 h-5 fill-current" />
+                                        Ler Online
+                                    </>
+                                )}
+                            </a>
+                        </Button>
+                    ) : (
+                        <Button className="w-full h-12 text-lg font-semibold gap-2 shadow-lg shadow-primary/20" variant="default" disabled>
+                            <Play className="w-5 h-5 fill-current" />
+                            Ler Online
+                        </Button>
+                    )}
                 </motion.div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -69,10 +138,26 @@ export function ResourceActions() {
 
                 <div className="h-px bg-border my-2" />
 
-                <Button variant="secondary" className="w-full gap-2 h-11">
-                    <Download className="w-4 h-4" />
-                    Baixar PDF
-                </Button>
+                {sourceType === "upload" && fileUrl && (
+                    <Button
+                        variant="secondary"
+                        className="w-full gap-2 h-11"
+                        onClick={handleDownload}
+                        disabled={isDownloading}
+                    >
+                        {isDownloading ? (
+                            <>
+                                <div className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
+                                Baixando...
+                            </>
+                        ) : (
+                            <>
+                                <Download className="w-4 h-4" />
+                                Baixar PDF
+                            </>
+                        )}
+                    </Button>
+                )}
 
                 <Button variant="ghost" className="w-full gap-2 text-muted-foreground">
                     <Share2 className="w-4 h-4" />

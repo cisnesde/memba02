@@ -10,6 +10,7 @@ export type ResourceType = "Livro" | "Artigo";
 
 export interface Resource {
     id: string;
+    slug: string;
     title: string;
     author: string;
     type: ResourceType;
@@ -94,7 +95,7 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
                         </CardContent>
                         <CardFooter className="p-5 pt-0 mt-auto">
                             <Button variant="ghost" className="w-full justify-between hover:bg-primary/5 hover:text-primary border border-transparent hover:border-primary/10 transition-colors" asChild>
-                                <Link href={`/resource/${resource.id}`}>
+                                <Link href={`/resource/${resource.slug || resource.id}`}>
                                     Ver Detalhes
                                     <ArrowRight className="w-4 h-4" />
                                 </Link>
