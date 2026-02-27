@@ -76,7 +76,7 @@ export function TrendingResources() {
                         <p className="text-muted-foreground mt-2">Publicações mais acedidas recentemente na nossa rede federada.</p>
                     </div>
                     <Button variant="outline" className="hidden md:flex" asChild>
-                        <Link href="/browse">Explorar Acervo</Link>
+                        <Link href="/explorer">Explorar Acervo</Link>
                     </Button>
                 </div>
 
@@ -127,7 +127,7 @@ export function TrendingResources() {
 
                 <div className="mt-8 flex justify-center md:hidden">
                     <Button variant="outline" className="w-full sm:w-auto" asChild>
-                        <Link href="/browse">Explorar Acervo Completo</Link>
+                        <Link href="/explorer">Explorar Acervo Completo</Link>
                     </Button>
                 </div>
             </div>

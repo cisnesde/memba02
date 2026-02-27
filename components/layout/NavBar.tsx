@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,12 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/co
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function NavBar() {
-    const { data: session } = useSession();
+    const { data: session, isPending } = useSession();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const navLinks: { name: string; href: string }[] = [];
 
@@ -43,7 +49,12 @@ export function NavBar() {
 
                 <div className="flex items-center gap-4">
                     <div className="hidden md:flex items-center gap-4">
-                        {session ? (
+                        {!mounted || isPending ? (
+                            <div className="flex items-center gap-2">
+                                <div className="h-9 w-[4.5rem] bg-muted animate-pulse rounded-md" />
+                                <div className="h-9 w-20 bg-muted animate-pulse rounded-md" />
+                            </div>
+                        ) : session ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -115,7 +126,17 @@ export function NavBar() {
                                     ))}
                                 </nav>
                                 <div className="h-px bg-border" />
-                                {session ? (
+                                {!mounted || isPending ? (
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
+                                            <div className="flex flex-col gap-2">
+                                                <div className="h-4 w-24 bg-muted animate-pulse rounded-md" />
+                                                <div className="h-3 w-32 bg-muted animate-pulse rounded-md" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : session ? (
                                     <div className="flex flex-col gap-4">
                                         <div className="flex items-center gap-3">
                                             <Avatar className="h-10 w-10 border">
