@@ -6,7 +6,7 @@ import { BookOpen, FileText, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export type ResourceType = "Livro" | "Artigo";
+export type ResourceType = "Livro" | "Artigo" | "Curso";
 
 export interface Resource {
     id: string;
@@ -17,6 +17,7 @@ export interface Resource {
     category: string;
     coverImage?: string;
     description: string;
+    externalUrl?: string; // Links diretos para cursos externos
 }
 
 interface ResourceGridProps {
@@ -43,67 +44,102 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
     }
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 pb-12">
-            {resources.map((resource, index) => (
-                <motion.div
-                    key={resource.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                    whileHover={{ y: -5 }}
-                >
-                    <Card className="h-full flex flex-col overflow-hidden group border-muted/50 hover:border-primary/30 transition-colors shadow-sm hover:shadow-md">
-                        <CardHeader className="p-0 relative aspect-[4/3] bg-muted overflow-hidden flex items-center justify-center">
-                            {resource.coverImage ? (
-                                <Image
-                                    src={resource.coverImage}
-                                    alt={resource.title}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-secondary/30 text-secondary-foreground">
-                                    {resource.type === "Livro" ? (
-                                        <BookOpen className="h-16 w-16 opacity-20" />
-                                    ) : (
-                                        <FileText className="h-16 w-16 opacity-20" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 px-4 pb-12">
+            {resources.map((index_res, index) => {
+                const resource = index_res as any;
+                const isCourse = resource.type === "Curso";
+                const isExternalCourse = isCourse && resource.externalUrl;
+                const cardHref = isExternalCourse ? resource.externalUrl : `/resource/${resource.slug || resource.id}`;
+                const target = isExternalCourse ? "_blank" : undefined;
+                const rel = isExternalCourse ? "noopener noreferrer" : undefined;
+                const credentialType = resource.credentialType;
+
+                return (
+                    <motion.div
+                        key={resource.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.03 }}
+                        whileHover={{ y: -6 }}
+                        className="h-full"
+                    >
+                        <Link
+                            href={cardHref || "#"}
+                            target={target}
+                            rel={rel}
+                            className="block h-full group"
+                        >
+                            <Card className={`h-full flex flex-col overflow-hidden border-none shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)] transition-all duration-500 bg-white dark:bg-zinc-900 p-3 rounded-2xl ${isCourse ? 'border border-zinc-100 dark:border-zinc-800' : ''}`}>
+                                {!isCourse && (
+                                    <CardHeader className="p-0 relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800/80 overflow-hidden flex items-center justify-center rounded-xl mb-3 shadow-sm border border-black/5 dark:border-white/5">
+                                        {resource.coverImage ? (
+                                            <div className="relative w-full h-full bg-zinc-200 dark:bg-zinc-800">
+                                                <Image
+                                                    src={resource.coverImage}
+                                                    alt={resource.title}
+                                                    fill
+                                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-zinc-300">
+                                                {resource.type === "Livro" ? (
+                                                    <BookOpen className="h-8 w-8 opacity-10" />
+                                                ) : (
+                                                    <FileText className="h-8 w-8 opacity-10" />
+                                                )}
+                                            </div>
+                                        )}
+                                        <div className="absolute top-2 left-2 z-20">
+                                            <Badge className="bg-black/80 dark:bg-white/80 text-white dark:text-black text-[7px] font-black uppercase tracking-tighter px-1.5 h-4 rounded-md shadow-md border-none w-fit">
+                                                {resource.type}
+                                            </Badge>
+                                        </div>
+                                    </CardHeader>
+                                )}
+
+                                <CardContent className={`flex-grow p-0 space-y-2 pb-1 ${isCourse ? 'pt-2' : ''}`}>
+                                    {isCourse && (
+                                        <div className="flex items-center justify-between mb-3">
+                                            <Badge className="bg-primary/10 text-primary text-[8px] font-bold uppercase tracking-widest px-2 h-4 rounded-full border-none">
+                                                {resource.type}
+                                            </Badge>
+                                            {credentialType && (
+                                                <span className="text-[8px] text-zinc-400 font-black uppercase tracking-tighter">
+                                                    {credentialType}
+                                                </span>
+                                            )}
+                                        </div>
                                     )}
-                                </div>
-                            )}
-                            <div className="absolute top-3 left-3 flex gap-2">
-                                <Badge variant={resource.type === "Livro" ? "default" : "secondary"} className="shadow-sm">
-                                    {resource.type === "Livro" ? (
-                                        <BookOpen className="w-3 h-3 mr-1" />
-                                    ) : (
-                                        <FileText className="w-3 h-3 mr-1" />
+
+                                    <div className="space-y-1">
+                                        <h3 className={`font-bold leading-tight text-zinc-900 dark:text-zinc-100 group-hover:text-primary transition-colors line-clamp-2 ${isCourse ? 'text-[14px]' : 'text-[13px]'}`}>
+                                            {resource.title}
+                                        </h3>
+                                        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium truncate">{resource.author}</p>
+                                    </div>
+
+                                    <p className="text-[11px] text-zinc-400 dark:text-zinc-500 line-clamp-3 leading-snug">
+                                        {resource.description}
+                                    </p>
+                                </CardContent>
+
+                                <CardFooter className="p-0 pt-3 flex justify-between items-center border-t border-zinc-50 dark:border-zinc-800/50 mt-auto">
+                                    <span className="text-[9px] font-bold text-primary flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                                        {isExternalCourse ? "Ver curso oficial" : "Abrir recurso"}
+                                        <ArrowRight className="h-2.5 w-2.5" />
+                                    </span>
+                                    {isCourse && (
+                                        <span className="text-[9px] text-zinc-300 dark:text-zinc-600 font-bold italic">
+                                            {resource.source}
+                                        </span>
                                     )}
-                                    {resource.type}
-                                </Badge>
-                                <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-border/50 text-foreground shadow-sm hover:bg-background">
-                                    {resource.category}
-                                </Badge>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="flex-grow p-5">
-                            <h3 className="font-semibold text-lg line-clamp-2 mb-1 group-hover:text-primary transition-colors">
-                                {resource.title}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mb-3">{resource.author}</p>
-                            <p className="text-sm text-muted-foreground line-clamp-3">
-                                {resource.description}
-                            </p>
-                        </CardContent>
-                        <CardFooter className="p-5 pt-0 mt-auto">
-                            <Button variant="ghost" className="w-full justify-between hover:bg-primary/5 hover:text-primary border border-transparent hover:border-primary/10 transition-colors" asChild>
-                                <Link href={`/resource/${resource.slug || resource.id}`}>
-                                    Ver Detalhes
-                                    <ArrowRight className="w-4 h-4" />
-                                </Link>
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                </motion.div>
-            ))}
+                                </CardFooter>
+                            </Card>
+                        </Link>
+                    </motion.div>
+                );
+            })}
         </div>
     );
 }

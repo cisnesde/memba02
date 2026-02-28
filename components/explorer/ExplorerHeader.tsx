@@ -19,8 +19,8 @@ export function ExplorerHeader({ searchQuery, setSearchQuery }: ExplorerHeaderPr
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-primary">
                     Explore nosso Acervo
                 </h1>
-                <p className="text-lg text-muted-foreground">
-                    Descubra milhares de livros e artigos. Busque por título, autor ou assunto.
+                <p className="text-lg text-zinc-500 dark:text-zinc-400">
+                    Descubra milhares de livros, artigos e cursos online. Busque por título, autor ou assunto.
                 </p>
             </motion.div>
 

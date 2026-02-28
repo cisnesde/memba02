@@ -30,21 +30,22 @@ export function NavBar() {
     ];
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto px-4 flex h-16 items-center justify-between">
                 <div className="flex items-center gap-6">
                     <Link href="/" className="flex items-center gap-2">
                         <BookOpen className="h-6 w-6 text-primary" />
                         <span className="text-xl font-bold tracking-tight">Memba</span>
                     </Link>
-                    <nav className="hidden md:flex items-center gap-6">
+                    <nav className="hidden md:flex items-center gap-8">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                className="text-sm font-semibold text-muted-foreground transition-all hover:text-primary relative group"
                             >
                                 {link.name}
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
                             </Link>
                         ))}
                     </nav>
@@ -102,77 +103,79 @@ export function NavBar() {
                         )}
                     </div>
 
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="md:hidden">
-                                <Menu className="h-6 w-6" />
-                                <span className="sr-only">Toggle navigation menu</span>
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="right">
-                            <SheetHeader className="text-left mb-6">
-                                <SheetTitle className="flex items-center gap-2">
-                                    <BookOpen className="h-5 w-5 text-primary" />
-                                    Memba
-                                </SheetTitle>
-                            </SheetHeader>
-                            <div className="flex flex-col gap-6">
-                                <nav className="flex flex-col gap-4">
-                                    {navLinks.map((link) => (
-                                        <Link
-                                            key={link.name}
-                                            href={link.href}
-                                            className="text-lg font-medium hover:text-primary transition-colors"
-                                        >
-                                            {link.name}
-                                        </Link>
-                                    ))}
-                                </nav>
-                                <div className="h-px bg-border" />
-                                {!mounted || isPending ? (
-                                    <div className="flex flex-col gap-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
-                                            <div className="flex flex-col gap-2">
-                                                <div className="h-4 w-24 bg-muted animate-pulse rounded-md" />
-                                                <div className="h-3 w-32 bg-muted animate-pulse rounded-md" />
+                    {mounted && (
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="md:hidden">
+                                    <Menu className="h-6 w-6" />
+                                    <span className="sr-only">Toggle navigation menu</span>
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="right">
+                                <SheetHeader className="text-left mb-6">
+                                    <SheetTitle className="flex items-center gap-2">
+                                        <BookOpen className="h-5 w-5 text-primary" />
+                                        Memba
+                                    </SheetTitle>
+                                </SheetHeader>
+                                <div className="flex flex-col gap-6">
+                                    <nav className="flex flex-col gap-4">
+                                        {navLinks.map((link) => (
+                                            <Link
+                                                key={link.name}
+                                                href={link.href}
+                                                className="text-lg font-medium hover:text-primary transition-colors"
+                                            >
+                                                {link.name}
+                                            </Link>
+                                        ))}
+                                    </nav>
+                                    <div className="h-px bg-border" />
+                                    {isPending ? (
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
+                                                <div className="flex flex-col gap-2">
+                                                    <div className="h-4 w-24 bg-muted animate-pulse rounded-md" />
+                                                    <div className="h-3 w-32 bg-muted animate-pulse rounded-md" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ) : session ? (
-                                    <div className="flex flex-col gap-4">
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="h-10 w-10 border">
-                                                <AvatarImage src={session.user.image || ""} alt={session.user.name || "User avatar"} />
-                                                <AvatarFallback>{session.user.name?.charAt(0) || <User className="h-5 w-5" />}</AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-medium">{session.user.name}</span>
-                                                <span className="text-xs text-muted-foreground">{session.user.email}</span>
+                                    ) : session ? (
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-10 w-10 border">
+                                                    <AvatarImage src={session.user.image || ""} alt={session.user.name || "User avatar"} />
+                                                    <AvatarFallback>{session.user.name?.charAt(0) || <User className="h-5 w-5" />}</AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-medium">{session.user.name}</span>
+                                                    <span className="text-xs text-muted-foreground">{session.user.email}</span>
+                                                </div>
                                             </div>
+                                            <nav className="flex flex-col gap-3">
+                                                <Link href="/profile" className="text-sm font-medium hover:text-primary">Profile</Link>
+                                                <Link href="/library" className="text-sm font-medium hover:text-primary">My Library</Link>
+                                            </nav>
+                                            <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 mt-2" onClick={() => signOut()}>
+                                                <LogOut className="mr-2 h-4 w-4" />
+                                                Log out
+                                            </Button>
                                         </div>
-                                        <nav className="flex flex-col gap-3">
-                                            <Link href="/profile" className="text-sm font-medium hover:text-primary">Profile</Link>
-                                            <Link href="/library" className="text-sm font-medium hover:text-primary">My Library</Link>
-                                        </nav>
-                                        <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 mt-2" onClick={() => signOut()}>
-                                            <LogOut className="mr-2 h-4 w-4" />
-                                            Log out
-                                        </Button>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col gap-3">
-                                        <Button variant="outline" className="w-full" asChild>
-                                            <Link href="/auth/signin">Login</Link>
-                                        </Button>
-                                        <Button className="w-full" asChild>
-                                            <Link href="/auth/signup">Cadastro</Link>
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
-                        </SheetContent>
-                    </Sheet>
+                                    ) : (
+                                        <div className="flex flex-col gap-3">
+                                            <Button variant="outline" className="w-full" asChild>
+                                                <Link href="/auth/signin">Login</Link>
+                                            </Button>
+                                            <Button className="w-full" asChild>
+                                                <Link href="/auth/signup">Cadastro</Link>
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    )}
                 </div>
             </div>
         </header>

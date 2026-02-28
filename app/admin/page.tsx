@@ -9,6 +9,7 @@ import { Plus, Shield, Loader2, AlertTriangle } from "lucide-react";
 
 export interface Resource {
     id: string;
+    slug: string;
     title: string;
     author: string;
     type: string;

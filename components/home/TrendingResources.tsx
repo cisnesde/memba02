@@ -5,6 +5,7 @@ import { BookOpen, FileText, ExternalLink, Library } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import Link from "next/link";
 
 interface Resource {
@@ -18,6 +19,8 @@ interface Resource {
     category: string;
     citations: number | null;
     pages: number | null;
+    coverImage?: string;
+    description: string;
 }
 
 interface TrendingResourcesProps {
@@ -58,48 +61,69 @@ export function TrendingResources({ resources }: TrendingResourcesProps) {
                 </div>
 
                 <motion.div
-                    className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"
+                    className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2"
                     variants={container}
                     initial="hidden"
                     whileInView="show"
                     viewport={{ once: true, margin: "-100px" }}
                 >
-                    {resources.map((resource) => (
-                        <motion.div key={resource.id} variants={item} className="h-full">
-                            <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-md hover:border-primary/50">
-                                <CardHeader className="p-5 pb-0 flex flex-row items-start justify-between">
-                                    <Badge variant={resource.type === "Livro" ? "default" : "secondary"} className="mb-2">
-                                        {resource.type === "Livro" ? <BookOpen className="h-3 w-3 mr-1" /> : <FileText className="h-3 w-3 mr-1" />}
-                                        {resource.type}
-                                    </Badge>
-                                    <span className="text-xs font-semibold text-muted-foreground px-2 py-1 bg-muted rounded-md shrink-0">
-                                        {resource.category}
-                                    </span>
-                                </CardHeader>
-                                <CardContent className="flex-1 p-5 pt-3">
-                                    <h3 className="font-bold text-lg leading-snug line-clamp-3 mb-2" title={resource.title}>
-                                        {resource.title}
-                                    </h3>
-                                    <p className="text-sm text-foreground/80 mb-1">{resource.author}</p>
-                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-3">
-                                        {resource.source && (
-                                            <span className="flex items-center">
-                                                <Library className="h-3 w-3 mr-1" /> {resource.source}
-                                            </span>
+                    {resources.map((resource, index) => (
+                        <motion.div
+                            key={resource.id}
+                            initial={{ opacity: 0, y: 15 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                            whileHover={{ y: -5, scale: 1.02 }}
+                        >
+                            <Link href={resource.type === "Curso" ? ((resource as any).externalUrl || "#") : `/resource/${resource.slug || resource.id}`} target={resource.type === "Curso" ? "_blank" : undefined} rel={resource.type === "Curso" ? "noopener noreferrer" : undefined} className="block h-full">
+                                <Card className={`h-full flex flex-col overflow-hidden group border-muted/30 hover:border-primary/50 transition-all duration-300 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.07)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] bg-card/80 backdrop-blur-sm ${resource.type === "Curso" ? 'p-1' : ''}`}>
+                                    {resource.type !== "Curso" && (
+                                        <CardHeader className="p-0 relative aspect-[2/3] bg-muted/10 overflow-hidden flex items-center justify-center border-b border-muted/5">
+                                            {resource.coverImage ? (
+                                                <div className="relative w-full h-full p-1.5 flex items-center justify-center">
+                                                    <Image
+                                                        src={resource.coverImage}
+                                                        alt={resource.title}
+                                                        fill
+                                                        className="object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-secondary/10 text-secondary-foreground">
+                                                    {resource.type === "Livro" ? (
+                                                        <BookOpen className="h-6 w-6 opacity-20" />
+                                                    ) : (
+                                                        <FileText className="h-6 w-6 opacity-20" />
+                                                    )}
+                                                </div>
+                                            )}
+                                        </CardHeader>
+                                    )}
+
+                                    <CardContent className={`flex-grow p-1.5 space-y-0.5 ${resource.type === "Curso" ? 'pt-2' : 'pt-0.5'}`}>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <Badge variant={resource.type === "Livro" ? "default" : "secondary"} className="h-3 px-1 text-[7px] font-bold uppercase tracking-tighter shadow-sm w-fit border-none">
+                                                {resource.type}
+                                            </Badge>
+                                            {resource.type === "Curso" && resource.source && (
+                                                <span className="text-[7px] text-muted-foreground/60 font-black italic">{resource.source}</span>
+                                            )}
+                                        </div>
+
+                                        <h3 className="font-bold text-[11px] leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                                            {resource.title}
+                                        </h3>
+                                        <p className="text-[9px] text-muted-foreground font-medium truncate opacity-70">{resource.author}</p>
+
+                                        {resource.description && (
+                                            <p className="text-[8px] text-muted-foreground line-clamp-2 mt-0.5 leading-tight opacity-50 group-hover:opacity-70 transition-opacity">
+                                                {resource.description}
+                                            </p>
                                         )}
-                                        {resource.year && <span>• {resource.year}</span>}
-                                        {resource.citations && <span className="text-primary font-medium">• {resource.citations} citações</span>}
-                                    </div>
-                                </CardContent>
-                                <CardFooter className="p-5 pt-0 mt-auto border-t">
-                                    <Button variant="ghost" className="w-full justify-between text-sm group" asChild>
-                                        <Link href={`/resource/${resource.slug || resource.id}`}>
-                                            Aceder ao Recurso
-                                            <ExternalLink className="h-4 w-4 ml-2 text-muted-foreground group-hover:text-primary transition-colors" />
-                                        </Link>
-                                    </Button>
-                                </CardFooter>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                            </Link>
                         </motion.div>
                     ))}
                 </motion.div>

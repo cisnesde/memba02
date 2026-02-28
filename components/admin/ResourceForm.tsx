@@ -54,7 +54,7 @@ interface ResourceFormProps {
     onCancel: () => void;
 }
 
-const RESOURCE_TYPES = ["Livro", "Artigo", "Review Paper", "Tese", "Monografia"];
+const RESOURCE_TYPES = ["Livro", "Artigo", "Review Paper", "Tese", "Monografia", "Curso"];
 const CATEGORIES = [
     "Tecnologia",
     "Medicina",
@@ -219,8 +219,8 @@ export function ResourceForm({ resource, onSuccess, onCancel }: ResourceFormProp
                         type="button"
                         onClick={() => setForm((prev) => ({ ...prev, sourceType: "upload" }))}
                         className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${form.sourceType === "upload"
-                                ? "border-primary bg-primary/5 text-primary"
-                                : "border-muted hover:border-muted-foreground/30 text-muted-foreground"
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-muted hover:border-muted-foreground/30 text-muted-foreground"
                             }`}
                     >
                         <Upload className="h-5 w-5" />
@@ -233,8 +233,8 @@ export function ResourceForm({ resource, onSuccess, onCancel }: ResourceFormProp
                         type="button"
                         onClick={() => setForm((prev) => ({ ...prev, sourceType: "external_link" }))}
                         className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${form.sourceType === "external_link"
-                                ? "border-primary bg-primary/5 text-primary"
-                                : "border-muted hover:border-muted-foreground/30 text-muted-foreground"
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-muted hover:border-muted-foreground/30 text-muted-foreground"
                             }`}
                     >
                         <Link2 className="h-5 w-5" />

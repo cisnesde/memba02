@@ -1,4 +1,7 @@
-import { v2 as cloudinary } from "cloudinary";
+// Cloudinary server-side library configuration
+
+import * as cloudinaryLib from "cloudinary";
+const cloudinary = cloudinaryLib.v2;
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

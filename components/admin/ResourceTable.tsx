@@ -20,12 +20,19 @@ interface Resource {
     author: string;
     type: string;
     category: string;
+    year: number | null;
+    description: string;
+    coverImage: string | null;
     sourceType: string;
+    fileUrl: string | null;
+    filePublicId: string | null;
+    externalUrl: string | null;
     source: string | null;
+    citations: number | null;
+    pages: number | null;
     featured: boolean;
     createdAt: string;
-    externalUrl: string | null;
-    fileUrl: string | null;
+    updatedAt: string;
 }
 
 interface ResourceTableProps {
