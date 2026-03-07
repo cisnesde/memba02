@@ -3,7 +3,7 @@ import { query } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { generateSlug } from "@/lib/slug";
-import { discoverExternalCourses } from "@/lib/course-discovery";
+
 
 export interface ResourceRow {
     id: string;
@@ -77,16 +77,10 @@ export async function GET(request: NextRequest) {
         sql += ` ORDER BY "createdAt" DESC LIMIT $${paramIndex}`;
         params.push(limit);
 
-        // Fetch DB results and external discovery results concurrently
-        const [dbResources, externalCourses] = await Promise.all([
-            query<ResourceRow>(sql, params),
-            search ? discoverExternalCourses(search) : Promise.resolve([])
-        ]);
+        // Fetch DB results
+        const dbResources = await query<ResourceRow>(sql, params);
 
-        // Merge results
-        const combinedResults = [...dbResources, ...externalCourses];
-
-        return NextResponse.json(combinedResults);
+        return NextResponse.json(dbResources);
     } catch (error) {
         console.error("Error fetching resources:", error);
         return NextResponse.json(

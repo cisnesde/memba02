@@ -77,24 +77,7 @@ export default function ExplorerPage() {
                         </h1>
                     </div>
 
-                    {/* Filter Chips Layer (edX Style) */}
-                    <div className="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar">
-                        <button className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 font-bold text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap">
-                            <span className="h-4 w-4 border-2 border-t-transparent animate-spin hidden" />
-                            All filters
-                        </button>
-                        {["Subject", "Skills", "Educador", "Nível", "Idioma", "Parceiro"].map((filter) => (
-                            <button
-                                key={filter}
-                                className="flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-bold text-sm hover:border-zinc-400 dark:hover:border-zinc-600 transition-all whitespace-nowrap group"
-                            >
-                                {filter}
-                                <svg className="w-4 h-4 transition-transform group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                        ))}
-                    </div>
+                    {/* Simple Category Breadcrumb will be below */}
                 </div>
             </div>
 

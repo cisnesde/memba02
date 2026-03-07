@@ -45,14 +45,9 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
 
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 px-4 pb-12">
-            {resources.map((index_res, index) => {
-                const resource = index_res as any;
+            {resources.map((resource, index) => {
                 const isCourse = resource.type === "Curso";
-                const isExternalCourse = isCourse && resource.externalUrl;
-                const cardHref = isExternalCourse ? resource.externalUrl : `/resource/${resource.slug || resource.id}`;
-                const target = isExternalCourse ? "_blank" : undefined;
-                const rel = isExternalCourse ? "noopener noreferrer" : undefined;
-                const credentialType = resource.credentialType;
+                const cardHref = `/resource/${resource.slug || resource.id}`;
 
                 return (
                     <motion.div
@@ -65,8 +60,6 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
                     >
                         <Link
                             href={cardHref || "#"}
-                            target={target}
-                            rel={rel}
                             className="block h-full group"
                         >
                             <Card className={`h-full flex flex-col overflow-hidden border-none shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)] transition-all duration-500 bg-white dark:bg-zinc-900 p-3 rounded-2xl ${isCourse ? 'border border-zinc-100 dark:border-zinc-800' : ''}`}>
@@ -104,11 +97,6 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
                                             <Badge className="bg-primary/10 text-primary text-[8px] font-bold uppercase tracking-widest px-2 h-4 rounded-full border-none">
                                                 {resource.type}
                                             </Badge>
-                                            {credentialType && (
-                                                <span className="text-[8px] text-zinc-400 font-black uppercase tracking-tighter">
-                                                    {credentialType}
-                                                </span>
-                                            )}
                                         </div>
                                     )}
 
@@ -126,14 +114,9 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
 
                                 <CardFooter className="p-0 pt-3 flex justify-between items-center border-t border-zinc-50 dark:border-zinc-800/50 mt-auto">
                                     <span className="text-[9px] font-bold text-primary flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
-                                        {isExternalCourse ? "Ver curso oficial" : "Abrir recurso"}
+                                        Abrir recurso
                                         <ArrowRight className="h-2.5 w-2.5" />
                                     </span>
-                                    {isCourse && (
-                                        <span className="text-[9px] text-zinc-300 dark:text-zinc-600 font-bold italic">
-                                            {resource.source}
-                                        </span>
-                                    )}
                                 </CardFooter>
                             </Card>
                         </Link>

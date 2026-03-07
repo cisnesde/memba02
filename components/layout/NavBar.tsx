@@ -14,6 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function NavBar() {
@@ -102,6 +103,8 @@ export function NavBar() {
                             </div>
                         )}
                     </div>
+
+                    <ThemeToggle />
 
                     {mounted && (
                         <Sheet>
