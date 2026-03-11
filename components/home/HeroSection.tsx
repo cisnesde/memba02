@@ -16,7 +16,17 @@ export function HeroSection() {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            router.push(`/search?q=${encodeURIComponent(searchQuery)}&type=${resourceType}`);
+            const params = new URLSearchParams();
+            params.append("search", searchQuery.trim());
+            if (resourceType !== "all") {
+                // Map the tabs to categories/types as expected by the API
+                const typeMap: Record<string, string> = {
+                    "books": "Livros",
+                    "articles": "Artigos"
+                };
+                params.append("category", typeMap[resourceType] || resourceType);
+            }
+            router.push(`/explorer?${params.toString()}`);
         }
     };
 
@@ -84,7 +94,7 @@ export function HeroSection() {
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs md:text-sm text-muted-foreground">
                         <span className="font-medium mr-2">Tópicos Recentes:</span>
                         {["Inteligência Artificial", "Sustentabilidade", "Medicina Moderna", "Economia Circular"].map((tag) => (
-                            <span key={tag} className="hover:text-primary hover:underline cursor-pointer transition-colors" onClick={() => router.push(`/search?q=${encodeURIComponent(tag)}`)}>
+                            <span key={tag} className="hover:text-primary hover:underline cursor-pointer transition-colors" onClick={() => router.push(`/explorer?search=${encodeURIComponent(tag)}`)}>
                                 {tag}
                             </span>
                         ))}

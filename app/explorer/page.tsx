@@ -1,17 +1,26 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { ExplorerHeader } from "@/components/explorer/ExplorerHeader";
 import { CategoryFilter } from "@/components/explorer/CategoryFilter";
 import { ResourceGrid, Resource } from "@/components/explorer/ResourceGrid";
 import { ResourceGridSkeleton } from "@/components/explorer/ResourceSkeleton";
-import { Loader2 } from "lucide-react";
 
-export default function ExplorerPage() {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [activeCategory, setActiveCategory] = useState("Todos");
+function ExplorerContent() {
+    const searchParams = useSearchParams();
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+    const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "Todos");
     const [resources, setResources] = useState<Resource[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Update state when URL params change (e.g. from Home page redirect)
+    useEffect(() => {
+        const query = searchParams.get("search");
+        const cat = searchParams.get("category");
+        if (query !== null) setSearchQuery(query);
+        if (cat !== null) setActiveCategory(cat);
+    }, [searchParams]);
 
     // Fetch resources from the API with dynamic filters
     useEffect(() => {
@@ -49,9 +58,6 @@ export default function ExplorerPage() {
         return ["Todos", "Livros", "Artigos", ...Array.from(cats).sort()];
     }, [resources]);
 
-    // Since we now filter API-side, filteredResources is just the resources returned by the API
-    const filteredResources = resources;
-
     return (
         <div className="min-h-screen bg-white dark:bg-zinc-950 pt-20">
             {/* Search Header */}
@@ -71,17 +77,15 @@ export default function ExplorerPage() {
                                 <span className="animate-pulse bg-zinc-200 dark:bg-zinc-800 rounded-lg inline-block w-48 h-10" />
                             ) : (
                                 <>
-                                    {filteredResources.length} resultados para "{searchQuery || activeCategory}"
+                                    {resources.length} resultados para "{searchQuery || activeCategory}"
                                 </>
                             )}
                         </h1>
                     </div>
-
-                    {/* Simple Category Breadcrumb will be below */}
                 </div>
             </div>
 
-            {/* Category Breadcrumb (Original Filter logic preserved) */}
+            {/* Category Breadcrumb */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
                 <CategoryFilter
                     categories={categories}
@@ -95,9 +99,21 @@ export default function ExplorerPage() {
                 {loading ? (
                     <ResourceGridSkeleton count={24} />
                 ) : (
-                    <ResourceGrid resources={filteredResources} />
+                    <ResourceGrid resources={resources} />
                 )}
             </main>
         </div>
+    );
+}
+
+export default function ExplorerPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen pt-20 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        }>
+            <ExplorerContent />
+        </Suspense>
     );
 }

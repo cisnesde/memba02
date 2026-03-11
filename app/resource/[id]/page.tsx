@@ -110,6 +110,7 @@ export default function ResourcePage({ params }: { params: Promise<{ id: string 
                     {/* Sidebar Actions */}
                     <div className="lg:col-span-1">
                         <ResourceActions
+                            resourceId={resource.id}
                             title={resource.title}
                             sourceType={resource.sourceType}
                             fileUrl={resource.fileUrl}

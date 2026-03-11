@@ -14,22 +14,23 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+import { SaveToLibraryDialog } from "@/components/library/SaveToLibraryDialog";
+
 interface ResourceActionsProps {
+    resourceId: string;
     title: string;
     sourceType: string;
     fileUrl: string | null;
     externalUrl: string | null;
 }
 
-export function ResourceActions({ title, sourceType, fileUrl, externalUrl }: ResourceActionsProps) {
+export function ResourceActions({ resourceId, title, sourceType, fileUrl, externalUrl }: ResourceActionsProps) {
     const [isDownloading, setIsDownloading] = useState(false);
     const isLocal = sourceType === "upload";
 
+    // ... (handleDownload and actionUrl remain same)
     const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (!fileUrl || isDownloading) return;
-
-        // If it's a simple link, we let it be. But for Cloudinary we might want to ensure download.
-        // For now, let the default anchor behavior work or use the sophisticated blob-fetching logic if needed.
     };
 
     const actionUrl = isLocal ? fileUrl : externalUrl;
@@ -68,10 +69,11 @@ export function ResourceActions({ title, sourceType, fileUrl, externalUrl }: Res
                         <Share2 className="w-5 h-5 text-muted-foreground" />
                         Partilhar Recurso
                     </Button>
-                    <Button variant="ghost" className="w-full h-12 text-sm font-semibold rounded-xl text-muted-foreground hover:text-foreground gap-3 hover:bg-primary/5">
-                        <Bookmark className="w-4 h-4" />
-                        Guardar na Biblioteca
-                    </Button>
+                    
+                    <SaveToLibraryDialog 
+                        resourceId={resourceId} 
+                        resourceTitle={title} 
+                    />
                 </div>
 
                 <div className="pt-6 border-t mt-4 space-y-4">

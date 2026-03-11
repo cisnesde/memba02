@@ -1,5 +1,12 @@
 import { motion } from "framer-motion";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+    Card,
+    CardAction,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BookOpen, FileText, ArrowRight } from "lucide-react";
@@ -44,9 +51,8 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
     }
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 px-4 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 pb-12">
             {resources.map((resource, index) => {
-                const isCourse = resource.type === "Curso";
                 const cardHref = `/resource/${resource.slug || resource.id}`;
 
                 return (
@@ -59,64 +65,50 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
                         className="h-full"
                     >
                         <Link
-                            href={cardHref || "#"}
+                            href={cardHref}
                             className="block h-full group"
                         >
-                            <Card className={`h-full flex flex-col overflow-hidden border-none shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)] transition-all duration-500 bg-white dark:bg-zinc-900 p-3 rounded-2xl ${isCourse ? 'border border-zinc-100 dark:border-zinc-800' : ''}`}>
-                                {!isCourse && (
-                                    <CardHeader className="p-0 relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800/80 overflow-hidden flex items-center justify-center rounded-xl mb-3 shadow-sm border border-black/5 dark:border-white/5">
-                                        {resource.coverImage ? (
-                                            <div className="relative w-full h-full bg-zinc-200 dark:bg-zinc-800">
-                                                <Image
-                                                    src={resource.coverImage}
-                                                    alt={resource.title}
-                                                    fill
-                                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-zinc-300">
-                                                {resource.type === "Livro" ? (
-                                                    <BookOpen className="h-8 w-8 opacity-10" />
-                                                ) : (
-                                                    <FileText className="h-8 w-8 opacity-10" />
-                                                )}
-                                            </div>
-                                        )}
-                                        <div className="absolute top-2 left-2 z-20">
-                                            <Badge className="bg-black/80 dark:bg-white/80 text-white dark:text-black text-[7px] font-black uppercase tracking-tighter px-1.5 h-4 rounded-md shadow-md border-none w-fit">
-                                                {resource.type}
-                                            </Badge>
-                                        </div>
-                                    </CardHeader>
-                                )}
-
-                                <CardContent className={`flex-grow p-0 space-y-2 pb-1 ${isCourse ? 'pt-2' : ''}`}>
-                                    {isCourse && (
-                                        <div className="flex items-center justify-between mb-3">
-                                            <Badge className="bg-primary/10 text-primary text-[8px] font-bold uppercase tracking-widest px-2 h-4 rounded-full border-none">
-                                                {resource.type}
-                                            </Badge>
+                            <Card className="relative h-full flex flex-col overflow-hidden border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-0 rounded-2xl shadow-sm group-hover:shadow-xl group-hover:shadow-primary/5 transition-all duration-500">
+                                <div className="relative aspect-video w-full overflow-hidden">
+                                    <div className="absolute inset-0 z-10 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
+                                    {resource.coverImage ? (
+                                        <Image
+                                            src={resource.coverImage}
+                                            alt={resource.title}
+                                            fill
+                                            className="relative z-0 object-cover brightness-90 grayscale-[0.2] transition-transform duration-700 group-hover:scale-110 group-hover:brightness-100 group-hover:grayscale-0"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 text-zinc-400">
+                                            {resource.type === "Livro" ? (
+                                                <BookOpen className="h-12 w-12 opacity-20" />
+                                            ) : (
+                                                <FileText className="h-12 w-12 opacity-20" />
+                                            )}
                                         </div>
                                     )}
+                                </div>
 
-                                    <div className="space-y-1">
-                                        <h3 className={`font-bold leading-tight text-zinc-900 dark:text-zinc-100 group-hover:text-primary transition-colors line-clamp-2 ${isCourse ? 'text-[14px]' : 'text-[13px]'}`}>
-                                            {resource.title}
-                                        </h3>
-                                        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium truncate">{resource.author}</p>
-                                    </div>
-
-                                    <p className="text-[11px] text-zinc-400 dark:text-zinc-500 line-clamp-3 leading-snug">
+                                <CardHeader className="px-5 py-5 gap-1.5">
+                                    <CardAction>
+                                        <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider px-2 h-5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-none">
+                                            {resource.type}
+                                        </Badge>
+                                    </CardAction>
+                                    <CardTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-primary transition-colors line-clamp-1">
+                                        {resource.title}
+                                    </CardTitle>
+                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium -mt-1">{resource.author}</p>
+                                    <CardDescription className="text-xs text-zinc-400 dark:text-zinc-500 line-clamp-2 leading-relaxed mt-1">
                                         {resource.description}
-                                    </p>
-                                </CardContent>
+                                    </CardDescription>
+                                </CardHeader>
 
-                                <CardFooter className="p-0 pt-3 flex justify-between items-center border-t border-zinc-50 dark:border-zinc-800/50 mt-auto">
-                                    <span className="text-[9px] font-bold text-primary flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                                <CardFooter className="px-5 pb-5 pt-0 mt-auto">
+                                    <Button variant="outline" className="w-full h-10 text-xs font-bold rounded-xl border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all">
                                         Abrir recurso
-                                        <ArrowRight className="h-2.5 w-2.5" />
-                                    </span>
+                                        <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                                    </Button>
                                 </CardFooter>
                             </Card>
                         </Link>
